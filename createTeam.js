@@ -22,7 +22,7 @@ const shift = (array = []) => {
   for (let i = 0; i < array.length; i++) {
     let newIdx = i + (i % 4) * 4;
 
-    if (newIdx > array.length) {
+    if (newIdx >= array.length) {
       newIdx = newIdx % array.length;
     }
 

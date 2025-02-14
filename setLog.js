@@ -1,4 +1,7 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from "fs";
+
+const weightFilePath = "./logs/weightLogs.json";
+const logFilePath = "./logs/logs.json";
 
 function getYesterDayKey() {
   const date = new Date();
@@ -33,11 +36,10 @@ function flattenData(array) {
 
 export function saveTeams(teams) {
   let data = {};
-  const filePath = './logs/logs.json';
 
   // 기존 파일이 있으면 데이터를 불러옴
-  if (existsSync(filePath)) {
-    const fileData = readFileSync(filePath);
+  if (existsSync(logFilePath)) {
+    const fileData = readFileSync(logFilePath);
     data = JSON.parse(fileData);
   }
 
@@ -52,29 +54,64 @@ export function saveTeams(teams) {
     data: flattenData(teams),
   };
 
-  writeFileSync(filePath, JSON.stringify(data, null, 2)); // 데이터를 파일에 저장 (2는 JSON 정렬)
+  writeFileSync(logFilePath, JSON.stringify(data, null, 2)); // 데이터를 파일에 저장 (2는 JSON 정렬)
 
-  console.log('저장 완료');
+  console.log("팀 저장 완료");
   console.log(teams);
 }
 
+export function saveWeights(weights) {
+  writeFileSync(weightFilePath, JSON.stringify(weights, null, 2)); // 데이터를 파일에 저장 (2는 JSON 정렬)
+  console.log("팀 저장 완료");
+  console.log(weights);
+}
+
 export function loadPreviousTeams() {
-  const filePath = './logs/logs.json';
   const dateKey = getYesterDayKey();
 
-  if (existsSync(filePath)) {
-    const fileData = readFileSync(filePath);
+  if (existsSync(logFilePath)) {
+    const fileData = readFileSync(logFilePath);
     const data = JSON.parse(fileData);
 
     if (Object.keys(data).length != 0) {
-      data[dateKey] && console.log('어제 날짜 발견!! 어제 팀으로 셔플합니다.');
+      data[dateKey] && console.log("어제 날짜 발견!! 어제 팀으로 셔플합니다.");
 
       return data[dateKey] || null; // 어제 날짜의 데이터를 반환
     }
   }
 
-  console.log('어제 팀을 발견하지 못했으므로, default data 사용합니다.');
+  console.log("어제 팀을 발견하지 못했으므로, default data 사용합니다.");
 
   return null; // 파일이 없으면 null 반환
 }
 
+export function loadPreviousWeights(teams) {
+  if (existsSync(weightFilePath)) {
+    const fileData = readFileSync(weightFilePath);
+    const data = JSON.parse(fileData);
+
+    let allMembersExist = true;
+    teams.flat().forEach((member) => {
+      if (!data[member]) {
+        allMembersExist = false;
+      }
+    });
+
+    if (allMembersExist) {
+      return data;
+    }
+  }
+
+  const weights = {};
+
+  teams.forEach((member) => {
+    weights[member] = {};
+    teams.forEach((other) => {
+      if (member !== other) {
+        weights[member][other] = 0;
+      }
+    });
+  });
+
+  return weights;
+}

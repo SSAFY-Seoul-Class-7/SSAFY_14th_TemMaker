@@ -22,7 +22,7 @@ async function deploy() {
   const teams = getPrevTeams();
   const weights = getPrevWeight(teams);
 
-  // const message = teamsToString(createTeams(teams, TEAM_SIZE)); // 이전 로직직
+  // const message = teamsToString(createTeams(teams, TEAM_SIZE)); // 이전 로직
   const message = teamsToString(createTeamsV2(teams, weights, TEAM_SIZE));
 
   await sendWebhook(message);

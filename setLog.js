@@ -1,5 +1,8 @@
 import { existsSync, readFileSync, writeFileSync } from "fs";
 
+const weightFilePath = "./logs/weightLogs.json";
+const logFilePath = "./logs/logs.json";
+
 function getYesterDayKey() {
   const date = new Date();
   const year = date.getFullYear();
@@ -33,11 +36,10 @@ function flattenData(array) {
 
 export function saveTeams(teams) {
   let data = {};
-  const filePath = "./logs/logs.json";
 
   // 기존 파일이 있으면 데이터를 불러옴
-  if (existsSync(filePath)) {
-    const fileData = readFileSync(filePath);
+  if (existsSync(logFilePath)) {
+    const fileData = readFileSync(logFilePath);
     data = JSON.parse(fileData);
   }
 
@@ -52,26 +54,23 @@ export function saveTeams(teams) {
     data: flattenData(teams),
   };
 
-  writeFileSync(filePath, JSON.stringify(data, null, 2)); // 데이터를 파일에 저장 (2는 JSON 정렬)
+  writeFileSync(logFilePath, JSON.stringify(data, null, 2)); // 데이터를 파일에 저장 (2는 JSON 정렬)
 
   console.log("팀 저장 완료");
   console.log(teams);
 }
 
 export function saveWeights(weights) {
-  const filePath = "./logs/weigthLogs.json";
-
-  writeFileSync(filePath, JSON.stringify(weights, null, 2)); // 데이터를 파일에 저장 (2는 JSON 정렬)
+  writeFileSync(weightFilePath, JSON.stringify(weights, null, 2)); // 데이터를 파일에 저장 (2는 JSON 정렬)
   console.log("팀 저장 완료");
   console.log(weights);
 }
 
 export function loadPreviousTeams() {
-  const filePath = "./logs/logs.json";
   const dateKey = getYesterDayKey();
 
-  if (existsSync(filePath)) {
-    const fileData = readFileSync(filePath);
+  if (existsSync(logFilePath)) {
+    const fileData = readFileSync(logFilePath);
     const data = JSON.parse(fileData);
 
     if (Object.keys(data).length != 0) {
@@ -87,10 +86,8 @@ export function loadPreviousTeams() {
 }
 
 export function loadPreviousWeights(teams) {
-  const filePath = "./logs/weigthLogs.json";
-
-  if (existsSync(filePath)) {
-    const fileData = readFileSync(filePath);
+  if (existsSync(weightFilePath)) {
+    const fileData = readFileSync(weightFilePath);
     const data = JSON.parse(fileData);
 
     let allMembersExist = true;

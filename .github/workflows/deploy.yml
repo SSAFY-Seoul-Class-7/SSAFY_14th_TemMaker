@@ -4,11 +4,12 @@ on:
   push: # 테스트를 위해 추가 
   schedule:
   # - cron: '30 22 * * 0-4' # UTC : 일 ~ 목 오후 23시 00분 => KST : 월 ~ 금 오전 07시 30분
-  - cron: '37 1 * * 1-5'
+  - cron: '50 1 * * 1-5'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: mm
     steps:
       # 현재 repository로 접근
       - uses: actions/checkout@v4
